@@ -1,0 +1,67 @@
+<?php  
+session_start(); 
+if(isset($_POST["cashOut"])){  
+  
+	if(!empty($_POST['amountPeso'])) {  
+		$amount=$_POST['amountPeso'];  
+		$account_num=$_SESSION['sess_accountnumb'];
+		$total_income_money = 0;
+		$apply_date = GetDate();
+		$max = 1000;
+		$newBal = 0;
+		
+		
+		/* withdrawal calculation and check, should be done after the approve
+		$con=mysqli_connect('localhost','root','') or die(mysql_error());
+		mysqli_select_db($con,'user') or die("cannot select DB"); 
+
+		//get the amount in wallet to check if you have money_format
+		$query_display_wallet=mysqli_query($con,"SELECT * FROM income_wallet WHERE 	income_account_num ='".$account_num."'"); 
+		$numrows_income_wallet=mysqli_num_rows($query_display_wallet);
+		if($numrows_income_wallet!=0)
+		{
+			while($row = mysqli_fetch_array($query_display_wallet))
+			{
+				$total_income_money = (int)$row['income_avail_wid_bal'];
+				//$account_num = $row['i_account_id'];
+			}
+			if($amount > $total_income_money)
+			{
+				echo "invalid amount, must be less than your withdrawable balance";
+			}
+			if($amount < $total_income_money && $amount > $max)
+			{
+				$newBal = $total_income_money - $amount;
+				$sql_amount_update_wallet = "UPDATE income_wallet SET income_avail_wid_bal='".$newBal."' WHERE income_account_num='".$account_num."'";
+				$query_cycle_done=mysqli_query($con,$sql_amount_update_wallet); 
+			}
+			
+		}
+		else{
+			echo "no money yet";
+		}
+						
+		*/
+		
+		
+		 
+  
+		$sql = "INSERT INTO investment_table (i_account_id,trans_type,amount,status,inv_date) VALUES ('$account_num','Cash-out','$amount','Pending',CURRENT_TIMESTAMP)";
+	  
+		$query=mysqli_query($con,$sql);  
+		
+		if($query)
+		{
+			//echo "Apply for buy-in completed";
+			header("location:clientPage.php");	
+		}
+		else{
+			echo "Failed. Duplicate investment number_format";
+		}
+	} 
+	else 
+	{  
+		echo "All fields are required!";  
+	}  
+}  
+?> 

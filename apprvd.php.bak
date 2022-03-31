@@ -1,0 +1,24 @@
+<?php
+session_start();
+$approver = $_SESSION['sess_accountnumb'];
+$id = $_GET['approve'];
+
+	if (!empty($_GET['approve'])) {
+		
+
+		$con=mysqli_connect('localhost','root','') or die(mysql_error());  
+		mysqli_select_db($con,'user') or die("cannot select DB");
+		
+		$query = mysqli_query($con, "UPDATE investment_table SET status='Approved',trans_done_status='Start',trans_done_date=CURRENT_TIMESTAMP,trans_approver='$approver' WHERE investment_num='$id'");
+		
+		if($query)
+		{
+			header("location:adminPage.php");
+		}
+	}
+	else{
+		echo $id;
+	}
+	
+?>
+

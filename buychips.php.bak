@@ -1,0 +1,33 @@
+<?php  
+session_start(); 
+if(isset($_POST["buychips"])){  
+  
+	if(!empty($_POST['chips_num'])) {  
+		$chips_num=$_POST['chips_num'];  
+		$account_num=$_SESSION['sess_accountnumb'];
+		//$account_num = "000211";
+		$amount_tot=$chips_num*100;
+		//$invest_num="4";
+		$buy_date = GetDate();
+		
+		$con=mysqli_connect('localhost','root','') or die(mysql_error());
+		mysqli_select_db($con,'user') or die("cannot select DB");  
+  
+		$sql = "INSERT INTO investment_table (i_account_id,tot_chips,amount,status,inv_date,trans_type) VALUES ('$account_num','$chips_num','$amount_tot','Pending',CURRENT_TIMESTAMP,'Buy-in')";
+	  
+		$query=mysqli_query($con,$sql);  
+		
+		if($query)
+		{
+			//echo "Apply for buy-in completed";
+			header("location:clientPage.php");
+			echo "<script>alert('Buy-in Application submitted');</script>";
+		}
+		else{
+			echo "Failed. Duplicate investment number_format";
+		}
+	} else {  
+		echo "All fields are required!";  
+	}  
+}  
+?> 

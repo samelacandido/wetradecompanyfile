@@ -1,0 +1,160 @@
+<?php
+include 'includes/headerView.php';
+session_start();
+
+if(!isset($_SESSION["sess_user"])){  
+    header("location:index.php");  
+} else {
+	$accnum = $_SESSION['sess_accountnumb'];
+	$current_inv_num = 1;
+?>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <img src="assets/img/logo.jpg" alt="Wordpress" width="32" height="32">&nbsp;
+        <a class="navbar-brand" href="#">WeTrade Company</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse row" id="navbarTogglerDemo02">    
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="#">Dashboard</a>
+                </li>
+				<li class="nav-item">
+                    <a class="nav-link" href="adminPage_cashOut.php">Cash-out</a>
+                </li>
+				<li class="nav-item">
+                    <a class="nav-link" href="adminPage.php">Buy-in</a>
+                </li>
+				<li class="nav-item">
+                    <a class="nav-link" href="adminPage.php">Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Profile</a>
+                </li>
+				<li class="nav-item">
+                    <a class="nav-link" href="logout.php">Logout</a>
+                </li>
+				<li class="nav-item">
+                    <a class="nav-link" >Welcome, <?=$_SESSION['sess_fname'];?>!</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+</br>
+<div class="container">
+
+	<div class="row">
+		<h2>Buy-in Request List</h2>
+		<div class="col" style="overflow-x:auto;height: 300px;">
+			
+			<table class="table  " id="ReqchipsTable">
+				<thead>
+					<tr class="textwhite"> 
+						<th scope="col">Applied Date</th>
+						<th scope="col">Transaction Number</th>
+						<th scope="col">Requester ID</th>
+						<th scope="col">Transaction Type</th>
+						<th scope="col">Number of chips</th>
+						<th scope="col">Amount</th>
+						<th scope="col">Status</th>
+						<th scope="col">Action</th>
+					</tr>
+				</thead>
+				<tbody >
+					<?php
+						$con=mysqli_connect('localhost','root','') or die(mysql_error());  
+						mysqli_select_db($con,'user') or die("cannot select DB");
+						$query=mysqli_query($con,"SELECT * FROM investment_table WHERE status='Pending' AND trans_type='Buy-in'");  
+						while($row = mysqli_fetch_array($query))
+						{
+							echo "<tr class='textwhite'>";
+							echo "<td>" . $row['inv_date'] . "</td>";
+							echo "<td> " .$row['investment_num'] . "</td>";
+							echo "<td>" . $row['i_account_id'] . "</td>";
+							echo "<td>" . $row['trans_type'] . "</td>";
+							echo "<td>" . $row['tot_chips'] . "</td>";
+							echo "<td>" . $row['amount'] . "</td>";
+							echo "<td>" . $row['status'] . "</td>";
+							echo "<td><button class='btnSelect  ' href='apprvd.php?approve=" . $row['investment_num'] . "' >Approve</button></td>";
+							echo "</tr>";
+						}
+						
+						
+						
+						mysqli_close($con);
+						
+					?>
+				</tbody>
+			</table>
+			
+		</div>
+	</div>
+		</br>
+	</br>
+	</br>
+	<div class="row">
+		<h2>Buy-in Approved List</h2>
+        <div class="col" style="overflow-x:auto;height: 300px;">
+            
+            <table class="table  ">
+                <thead>
+                    <tr class="textwhite">
+                        <th scope="col">Applied Date</th>
+						<th scope="col">Transaction Number</th>
+						<th scope="col">Requester ID</th>
+						<th scope="col">Transaction Type</th>
+						<th scope="col">Number of chips</th>
+						<th scope="col">Amount</th>
+						<th scope="col">Status</th>
+						<th scope="col">Approver</th>
+						
+                    </tr>
+                </thead>
+                <tbody >
+                   <?php
+					$con=mysqli_connect('localhost','root','') or die(mysql_error());  
+					mysqli_select_db($con,'user') or die("cannot select DB");
+					$query=mysqli_query($con,"SELECT * FROM investment_table WHERE status='Approved' AND trans_type='Buy-in' ");  
+					while($row = mysqli_fetch_array($query))
+					{
+						echo "<tr class='textwhite'>";
+							echo "<td>" . $row['inv_date'] . "</td>";
+							echo "<td>" .$row['investment_num'] . "</td>";
+							echo "<td>" .$row['i_account_id'] . "</td>";
+							echo "<td>" . $row['trans_type'] . "</td>";
+							echo "<td>" . $row['tot_chips'] . "</td>";
+							echo "<td>" . $row['amount'] . "</td>";
+							echo "<td>" . $row['status'] . "</td>";
+							echo "<td>" . $row['trans_approver'] . "</td>";
+						
+						echo "</tr>";
+					}
+					mysqli_close($con);
+				?>
+                </tbody>
+            </table>
+        </div>
+	</div>
+</div>
+
+<script>
+$(document).ready(function(){
+	// code to read selected table row cell data (values).
+	$(".btnSelect").on('click',function(){
+		 var currentRow=$(this).closest("tr");
+		 var col1=currentRow.find("td:eq(0)").html();
+		 var col2=currentRow.find("td:eq(1)").html();
+		 var col3=currentRow.find("td:eq(2)").html();
+		 var data=col1+"\n"+col2+"\n"+col3;
+		 alert(data);
+	});
+});
+</script>
+
+<?php
+include 'includes/footerView.php';
+}
+?>
